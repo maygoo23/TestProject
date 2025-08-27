@@ -1,0 +1,17 @@
+{
+  "name": "@signage/prisma",
+  "version": "0.0.1",
+  "prisma": {
+    "schema": "./schema.prisma"
+  },
+  "scripts": {
+    "generate": "prisma generate",
+    "migrate": "prisma migrate dev"
+  },
+  "dependencies": {
+    "@prisma/client": "^5.9.1"
+  },
+  "devDependencies": {
+    "prisma": "^5.9.1"
+  }
+}

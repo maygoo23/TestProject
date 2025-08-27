@@ -1,0 +1,9 @@
+{
+  "name": "signage-monorepo",
+  "private": true,
+  "workspaces": ["apps/*", "packages/*"],
+  "scripts": {
+    "dev": "npm run -w apps/api dev & npm run -w apps/web dev",
+    "build": "npm run -w apps/api build && npm run -w apps/web build"
+  }
+}
