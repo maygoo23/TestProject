@@ -44,6 +44,29 @@ enum AuditAction {
 }
 
 model User {
+  id           Int                 @id @default(autoincrement())
+  email        String              @unique
+  passwordHash String
+  role         Role
+  createdAt    DateTime            @default(now())
+  displays     UserDisplayAccess[]
+  media        MediaAsset[]        @relation("MediaCreatedBy")
+  textSlides   TextSlide[]         @relation("SlideCreatedBy")
+  playlists    Playlist[]          @relation("PlaylistCreatedBy")
+}
+
+model Display {
+  id                 Int                 @id @default(autoincrement())
+  name               String
+  slug               String              @unique
+  timezone           String
+  isActive           Boolean             @default(true)
+  assignedPlaylistId Int?
+  assignedPlaylist   Playlist?           @relation(fields: [assignedPlaylistId], references: [id])
+  createdAt          DateTime            @default(now())
+  updatedAt          DateTime            @updatedAt
+  users              UserDisplayAccess[]
+  heartbeats         PlayerHeartbeat[]
   id           Int       @id @default(autoincrement())
   email        String    @unique
   passwordHash String
@@ -80,6 +103,30 @@ model UserDisplayAccess {
 }
 
 model MediaAsset {
+  id              Int            @id @default(autoincrement())
+  kind            MediaKind
+  title           String
+  pathOrUrl       String
+  folderPath      String
+  tags            String?
+  durationHintSec Int?
+  width           Int?
+  height          Int?
+  createdBy       User           @relation("MediaCreatedBy", fields: [createdById], references: [id])
+  createdById     Int
+  createdAt       DateTime       @default(now())
+  playlistItems   PlaylistItem[]
+}
+
+model TextSlide {
+  id            Int            @id @default(autoincrement())
+  title         String?
+  contentJSON   String
+  thumbnailPath String
+  createdBy     User           @relation("SlideCreatedBy", fields: [createdById], references: [id])
+  createdById   Int
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
   id            Int       @id @default(autoincrement())
   kind          MediaKind
   title         String
@@ -108,6 +155,29 @@ model TextSlide {
 }
 
 model Playlist {
+  id                 Int            @id @default(autoincrement())
+  name               String
+  description        String?
+  overlayLogoAssetId Int?
+  showClock          Boolean        @default(false)
+  randomize          Boolean        @default(false)
+  createdBy          User           @relation("PlaylistCreatedBy", fields: [createdById], references: [id])
+  createdById        Int
+  updatedAtBy        Int?
+  updatedAt          DateTime       @updatedAt
+  createdAt          DateTime       @default(now())
+  items              PlaylistItem[]
+  displays           Display[]
+}
+
+model PlaylistItem {
+  id            Int         @id @default(autoincrement())
+  playlist      Playlist    @relation(fields: [playlistId], references: [id])
+  playlistId    Int
+  position      Int
+  refType       RefType
+  refId         Int
+  durationMs    Int
   id          Int       @id @default(autoincrement())
   name        String
   description String?
@@ -135,6 +205,20 @@ model PlaylistItem {
   endDateTime   DateTime?
   daypartStart  String?
   daypartEnd    String?
+  transition    Transition  @default(FADE)
+  transitionMs  Int         @default(500)
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+  MediaAsset    MediaAsset? @relation(fields: [mediaAssetId], references: [id])
+  mediaAssetId  Int?
+  TextSlide     TextSlide?  @relation(fields: [textSlideId], references: [id])
+  textSlideId   Int?
+
+  @@index([playlistId, position], name: "PlaylistItem_order")
+}
+
+model AuditLog {
+  id          Int         @id @default(autoincrement())
   transition    Transition @default(FADE)
   transitionMs  Int       @default(500)
   createdAt   DateTime @default(now())
@@ -148,6 +232,24 @@ model AuditLog {
   entityId    Int
   action      AuditAction
   diff        String
+  createdAt   DateTime    @default(now())
+}
+
+model PlayerHeartbeat {
+  id                  Int      @id @default(autoincrement())
+  display             Display  @relation(fields: [displayId], references: [id])
+  displayId           Int
+  at                  DateTime @default(now())
+  playerVersion       String
+  pageVisibilityState String
+  approxLatencyMs     Int?
+}
+
+model Settings {
+  id              Int     @id @default(1)
+  defaultTimezone String
+  cachePolicy     String?
+}
   createdAt   DateTime @default(now())
 }
 
