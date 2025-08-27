@@ -1,7 +1,17 @@
-import { PlaylistItem, RefType } from '@prisma/client';
-import { CompiledSchedule } from '@signage/shared';
+export enum RefType {
+  MEDIA = 'MEDIA',
+  TEXT_SLIDE = 'TEXT_SLIDE',
+}
 
-export function compileItems(items: PlaylistItem[]): CompiledSchedule['items'] {
+interface PlaylistItemLike {
+  id: number;
+  position: number;
+  refType: RefType;
+  durationMs: number;
+  transition: string;
+}
+
+export function compileItems(items: PlaylistItemLike[]) {
   return items
     .sort((a, b) => a.position - b.position)
     .map((it) => ({
@@ -12,3 +22,4 @@ export function compileItems(items: PlaylistItem[]): CompiledSchedule['items'] {
       transition: it.transition as any,
     }));
 }
+
