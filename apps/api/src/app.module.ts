@@ -8,9 +8,6 @@ import { AuditModule } from './audit/audit.module';
 
 @Module({
   imports: [AuthModule, UsersModule, DisplaysModule, PlaylistsModule, AuditModule],
-
-@Module({
-  imports: [AuthModule, UsersModule, DisplaysModule, PlaylistsModule],
   providers: [PrismaService],
   exports: [PrismaService],
 })
