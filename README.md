@@ -19,6 +19,10 @@ docker compose up --build
 
 The web UI runs on <http://localhost:5173>. Create a display via dashboard, create playlist and items via API (TODO UI), assign playlist to display, then open player URL at `/display/:slug`.
 
+### Audit logs
+
+All playlist mutations are recorded in the `AuditLog` table with actor, entity, and diff for basic traceability.
+
 ## Docker media volume
 
 Media files are stored at `./media` by default. Mount your persistent volume when running Docker.

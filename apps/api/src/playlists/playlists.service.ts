@@ -1,5 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma.service';
+import { AuditService } from '../audit/audit.service';
+
+@Injectable()
+export class PlaylistsService {
+  constructor(private prisma: PrismaService, private audit: AuditService) {}
 
 @Injectable()
 export class PlaylistsService {
@@ -10,6 +15,9 @@ export class PlaylistsService {
   }
 
   async create(name: string) {
+    const playlist = await this.prisma.playlist.create({ data: { name, createdById: 1 } }); // TODO: use auth user
+    await this.audit.log(1, 'Playlist', playlist.id, 'CREATE', { name });
+    return playlist;
     return this.prisma.playlist.create({ data: { name, createdById: 1 } }); // TODO: use auth user
   }
 
@@ -27,6 +35,7 @@ export class PlaylistsService {
         },
       });
     }
+    await this.audit.log(1, 'Playlist', id, 'UPDATE', { items });
     return { ok: true };
   }
 }

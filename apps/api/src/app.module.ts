@@ -4,6 +4,10 @@ import { UsersModule } from './users/users.module';
 import { DisplaysModule } from './displays/displays.module';
 import { PlaylistsModule } from './playlists/playlists.module';
 import { PrismaService } from './prisma.service';
+import { AuditModule } from './audit/audit.module';
+
+@Module({
+  imports: [AuthModule, UsersModule, DisplaysModule, PlaylistsModule, AuditModule],
 
 @Module({
   imports: [AuthModule, UsersModule, DisplaysModule, PlaylistsModule],
