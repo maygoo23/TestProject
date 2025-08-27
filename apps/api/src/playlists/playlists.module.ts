@@ -6,6 +6,8 @@ import { AuditModule } from '../audit/audit.module';
 
 @Module({
   imports: [AuditModule],
+
+@Module({
   providers: [PlaylistsService, PrismaService],
   controllers: [PlaylistsController],
 })
